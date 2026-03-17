@@ -1,0 +1,37 @@
+# Output data (contains target recon — never commit)
+output/
+
+# API keys (contains secrets)
+config/api_keys.conf
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Go
+go/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+
+# Logs
+*.log
+
+# Temp files
+*.tmp
+*.lock

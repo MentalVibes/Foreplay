@@ -1,0 +1,5 @@
+# format: repo_url|local_dir_name
+https://github.com/GerbenJavado/LinkFinder|LinkFinder
+https://github.com/m4ll0k/SecretFinder|SecretFinder
+https://github.com/RedSiege/EyeWitness|EyeWitness
+https://github.com/initstring/cloud_enum|cloud_enum

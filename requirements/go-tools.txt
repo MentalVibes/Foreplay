@@ -1,0 +1,10 @@
+# format: install_path|binary_name
+github.com/owasp-amass/amass/v4/...@master|amass
+github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest|subfinder
+github.com/projectdiscovery/httpx/cmd/httpx@latest|httpx
+github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest|nuclei
+github.com/lc/gau/v2/cmd/gau@latest|gau
+github.com/tomnomnom/waybackurls@latest|waybackurls
+github.com/trufflesecurity/trufflehog/v3@latest|trufflehog
+github.com/sensepost/gowitness@latest|gowitness
+github.com/haccer/subjack@latest|subjack

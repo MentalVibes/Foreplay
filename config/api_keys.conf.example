@@ -1,0 +1,30 @@
+# =============================================================================
+# API Keys Configuration
+# Copy this file: cp config/api_keys.conf.example config/api_keys.conf
+# Then populate with your keys. NEVER commit the real api_keys.conf.
+# =============================================================================
+
+# Shodan — https://account.shodan.io
+SHODAN_API_KEY=""
+
+# SecurityTrails — https://securitytrails.com/app/account/credentials
+SECURITYTRAILS_API_KEY=""
+
+# GitHub (read-only token, no write scopes) — https://github.com/settings/tokens
+GITHUB_TOKEN=""
+
+# Censys — https://search.censys.io/account/api
+CENSYS_API_ID=""
+CENSYS_API_SECRET=""
+
+# VirusTotal — https://www.virustotal.com/gui/user/api-key
+VIRUSTOTAL_API_KEY=""
+
+# Hunter.io — https://hunter.io/api-keys
+HUNTER_API_KEY=""
+
+# WhoisXML API — https://user.whoisxmlapi.com/products
+WHOISXML_API_KEY=""
+
+# ipinfo.io — https://ipinfo.io/account/token
+IPINFO_TOKEN=""

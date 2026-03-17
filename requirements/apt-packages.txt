@@ -1,0 +1,17 @@
+curl
+wget
+git
+jq
+python3
+python3-pip
+golang-go
+nmap
+ruby
+ruby-dev
+whois
+dnsutils
+parallel
+libssl-dev
+libffi-dev
+chromium-browser
+exploitdb
