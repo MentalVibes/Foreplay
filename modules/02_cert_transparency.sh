@@ -82,38 +82,61 @@ fi
 
 sleep 2
 
-# ── Step 3: Censys cert search ────────────────────────────────────────────────
+# ── Step 3: Censys cert search (v2 API) ───────────────────────────────────────
+# Censys v1 search/certificates is DEPRECATED. Using v2 endpoints.
+# Docs: https://search.censys.io/api — uses basic auth + CenQL query language
 if [[ -n "${CENSYS_API_ID:-}" && -n "${CENSYS_API_SECRET:-}" ]]; then
-  info "Querying Censys certificate search..."
+  info "Querying Censys v2 certificate search..."
 
-  censys_query() {
+  censys_v2_certs() {
     local query="$1"
     curl -s --max-time 30 \
-      "https://search.censys.io/api/v1/search/certificates" \
+      "https://search.censys.io/api/v2/certificates/search?q=${query}&per_page=100" \
       -u "${CENSYS_API_ID}:${CENSYS_API_SECRET}" \
-      -H "Content-Type: application/json" \
-      -d "{
-        \"query\": \"${query}\",
-        \"page\": 1,
-        \"fields\": [\"parsed.names\", \"parsed.subject.common_name\", \"parsed.subject.organization\"],
-        \"flatten\": true
-      }" 2>/dev/null || echo '{}'
+      -H "Accept: application/json" \
+      2>/dev/null || echo '{}'
   }
 
-  # Search by domain
-  censys_data=$(censys_query "parsed.names: ${TARGET}")
+  # Also query hosts endpoint for services presenting certs with target names
+  censys_v2_hosts() {
+    local query="$1"
+    curl -s --max-time 30 \
+      "https://search.censys.io/api/v2/hosts/search?q=${query}&per_page=100" \
+      -u "${CENSYS_API_ID}:${CENSYS_API_SECRET}" \
+      -H "Accept: application/json" \
+      2>/dev/null || echo '{}'
+  }
+
+  # Search certs by domain name (CenQL syntax)
+  censys_data=$(censys_v2_certs "cert.names:${TARGET}")
   echo "$censys_data" | jq -r \
-    '.results[]."parsed.names"[]? // empty' 2>/dev/null | \
+    '.result.hits[]?.names[]? // empty' 2>/dev/null | \
     grep -iE "\.${TARGET}$" | \
     sort -u >> "${OUT}/domains_from_certs.txt" || true
 
-  # Search by org
-  censys_org=$(censys_query "parsed.subject.organization: \"${ORG_NAME}\"")
+  sleep 1
+
+  # Search certs by org
+  censys_org=$(censys_v2_certs "cert.parsed.subject.organization:\"${ORG_NAME}\"")
   echo "$censys_org" | jq -r \
-    '.results[]."parsed.names"[]? // empty' 2>/dev/null | \
+    '.result.hits[]?.names[]? // empty' 2>/dev/null | \
     sort -u >> "${OUT}/censys_org_domains.txt" || true
 
-  log "Censys queries complete"
+  sleep 1
+
+  # Hosts search — find hosts presenting certs for target domain
+  censys_hosts=$(censys_v2_hosts "services.tls.certificates.leaf.names:${TARGET}")
+  echo "$censys_hosts" | jq -r \
+    '.result.hits[]?.ip // empty' 2>/dev/null | \
+    sort -u >> "${OUT}/censys_host_ips.txt" || true
+
+  # Extract names from host cert data
+  echo "$censys_hosts" | jq -r \
+    '.result.hits[]?.services[]?.tls.certificates.leaf.names[]? // empty' 2>/dev/null | \
+    grep -iE "\.${TARGET}$" | \
+    sort -u >> "${OUT}/domains_from_certs.txt" || true
+
+  log "Censys v2 queries complete"
 else
   warn "CENSYS_API_ID/SECRET not set — skipping Censys"
 fi
